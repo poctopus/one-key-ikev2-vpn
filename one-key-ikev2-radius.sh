@@ -111,10 +111,10 @@ function get_system(){
 function yum_install(){
     if [ "$system_str" = "0" ]; then
     yum -y update
-    yum -y install pam-devel openssl-devel make gcc curl
+    yum -y install pam-devel openssl-devel make gcc curl ntp
     else
     apt-get -y update
-    apt-get -y install libpam0g-dev libssl-dev make gcc curl
+    apt-get -y install libpam0g-dev libssl-dev make gcc curl ntp
     fi
 }
 
@@ -508,6 +508,7 @@ function iptables_set(){
         if [ "$interface" = "" ]; then
             interface="eth0"
         fi
+        iptables -F
         iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
         iptables -A FORWARD -s 10.31.0.0/24  -j ACCEPT
         iptables -A FORWARD -s 10.31.1.0/24  -j ACCEPT
@@ -557,6 +558,9 @@ function iptables_set(){
     if [ "$system_str" = "0" ]; then
         service iptables save
         service iptables restart
+        cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+        chkconfig ntpd on
+        service ntpd restart
     else
         iptables-save > /etc/iptables.rules
         cat > /etc/network/if-up.d/iptables<<-EOF
