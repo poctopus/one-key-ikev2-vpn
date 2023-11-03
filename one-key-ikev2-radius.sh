@@ -508,7 +508,7 @@ function iptables_set(){
         if [ "$interface" = "" ]; then
             interface="eth0"
         fi
-        iptables -F
+        # iptables -F
         iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
         iptables -A FORWARD -s 10.31.0.0/24  -j ACCEPT
         iptables -A FORWARD -s 10.31.1.0/24  -j ACCEPT
