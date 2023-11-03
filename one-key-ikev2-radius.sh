@@ -368,7 +368,7 @@ conn android_xauth_psk
     right=%any
     rightauth=psk
     rightauth2=xauth
-    rightsourceip=10.31.2.0/24
+    rightsourceip=10.31.1.0/24
     auto=add
 
 conn networkmanager-strongswan
@@ -447,7 +447,7 @@ EOF
 function configure_secrets(){
     cat > /usr/local/etc/ipsec.secrets<<-EOF
 : RSA server.pem
-: PSK "myPSKkey"
+: PSK "anyconnect"
 : XAUTH "myXAUTHPass"
 myUserName %any : EAP "myUserPass"
 EOF
