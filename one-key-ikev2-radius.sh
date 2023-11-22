@@ -111,10 +111,10 @@ function get_system(){
 function yum_install(){
     if [ "$system_str" = "0" ]; then
     yum -y update
-    yum -y install pam-devel openssl-devel make gcc curl ntp
+    yum -y install pam-devel openssl-devel make gcc curl
     else
     apt-get -y update
-    apt-get -y install libpam0g-dev libssl-dev make gcc curl ntp
+    apt-get -y install libpam0g-dev libssl-dev make gcc curl
     fi
 }
 
@@ -558,9 +558,7 @@ function iptables_set(){
     if [ "$system_str" = "0" ]; then
         service iptables save
         service iptables restart
-        cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-        chkconfig ntpd on
-        service ntpd restart
+        timedatectl set-timezone Asia/Shanghai
     else
         iptables-save > /etc/iptables.rules
         cat > /etc/network/if-up.d/iptables<<-EOF
