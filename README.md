@@ -30,14 +30,14 @@
 ==========
 1. 下载脚本:
     ```shell
-    wget --no-check-certificate https://raw.githubusercontent.com/quericy/one-key-ikev2-vpn/master/one-key-ikev2.sh
+    wget --no-check-certificate https://raw.githubusercontent.com/poctopus/one-key-ikev2-vpn/master/ikev2.sh
     ```
     * 注:如需使用其他分支的脚本,请将上述url中的master修改为分支名称,各分支区别详见本页的[分支说明](#分支说明)节点
 
 2. 运行脚本：
     ```shell
-    chmod +x one-key-ikev2.sh
-    bash one-key-ikev2.sh
+    chmod +x ikev2.sh
+    bash ikev2.sh
     ```
 
 3. 等待自动配置部分内容后，选择vps类型（OpenVZ还是Xen、KVM），**选错将无法成功连接，请务必核实服务器的类型**。输入服务器ip或者绑定的域名(连接vpn时服务器地址将需要与此保持一致,如果是导入泛域名证书这里需要写`*.域名`的形式)；
