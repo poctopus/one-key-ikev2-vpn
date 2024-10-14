@@ -396,7 +396,7 @@ conn ios_ikev2
     leftsubnet=::/0
     leftcert=server.cert.pem
     right=%any
-    rightauth=eap-radius
+    rightauth=eap-mschapv2
     rightsourceip=10.31.2.0/24
     rightsendcert=never
     eap_identity=%any
@@ -413,7 +413,7 @@ conn windows7
     leftsubnet=0.0.0.0/0
     leftcert=server.cert.pem
     right=%any
-    rightauth=eap-radius
+    rightauth=eap-mschapv2
     rightsourceip=10.31.2.0/24
     rightsendcert=never
     eap_identity=%any
@@ -436,6 +436,8 @@ function configure_strongswan(){
         }
         dns1 = 8.8.8.8
         dns2 = 8.8.4.4
+        dns1_ipv6 = 2001:4860:4860::8888
+        dns2_ipv6 = 2001:4860:4860::8844
         nbns1 = 8.8.8.8
         nbns2 = 8.8.4.4
 }
@@ -514,7 +516,6 @@ function iptables_set(){
         iptables -X
         iptables -F
         iptables -Z
-        iptables -t nat -A PREROUTING -p tcp -s 10.31.1.0/24 -j REDIRECT --to-ports 37067
         if [ "$use_SNAT_str" = "1" ]; then
             iptables -t nat -A POSTROUTING -s 10.31.0.0/24 -o $interface -j SNAT --to-source $static_ip
             iptables -t nat -A POSTROUTING -s 10.31.1.0/24 -o $interface -j SNAT --to-source $static_ip
@@ -523,6 +524,11 @@ function iptables_set(){
             iptables -t nat -A POSTROUTING -s 10.31.0.0/24 -o $interface -j MASQUERADE
             iptables -t nat -A POSTROUTING -s 10.31.1.0/24 -o $interface -j MASQUERADE
             iptables -t nat -A POSTROUTING -s 10.31.2.0/24 -o $interface -j MASQUERADE
+            ip6tables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+            ip6tables -A FORWARD -s 2a0b:8bc0:0002:e53b::1/68 -j ACCEPT
+            ip6tables -A INPUT -i eth0 -p ipv6-icmp -j ACCEPT
+            ip6tables -A INPUT -i eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+            ip6tables -A FORWARD -j REJECT
         fi
     else
         read -p "Network card interface(default_value:venet0):" interface
@@ -552,11 +558,14 @@ function iptables_set(){
     fi
     if [ "$system_str" = "0" ]; then
         service iptables save
+        service ip6tables save
     else
         iptables-save > /etc/iptables.rules
+        ip6tables-save > /etc/ip6tables.rules
         cat > /etc/network/if-up.d/iptables<<-EOF
 #!/bin/sh
 iptables-restore < /etc/iptables.rules
+ip6tables-restore < /etc/ipt6ables.rules
 EOF
         chmod +x /etc/network/if-up.d/iptables
     fi
