@@ -525,7 +525,7 @@ function iptables_set(){
             iptables -t nat -A POSTROUTING -s 10.31.1.0/24 -o $interface -j MASQUERADE
             iptables -t nat -A POSTROUTING -s 10.31.2.0/24 -o $interface -j MASQUERADE
             ip6tables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-            ip6tables -A FORWARD -s 2a0b:8bc0:0002:e53b::1/68 -j ACCEPT
+            ip6tables -A FORWARD -s 2a0b:8bc0:2:e53b:1000::/68 -j ACCEPT
             ip6tables -A INPUT -i eth0 -p ipv6-icmp -j ACCEPT
             ip6tables -A INPUT -i eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
             ip6tables -A FORWARD -j REJECT
@@ -565,7 +565,7 @@ function iptables_set(){
         cat > /etc/network/if-up.d/iptables<<-EOF
 #!/bin/sh
 iptables-restore < /etc/iptables.rules
-ip6tables-restore < /etc/ipt6ables.rules
+ip6tables-restore < /etc/ip6tables.rules
 EOF
         chmod +x /etc/network/if-up.d/iptables
     fi
