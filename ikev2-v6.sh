@@ -344,80 +344,44 @@ function create_cert(){
 function configure_ipsec(){
  cat > /usr/local/etc/ipsec.conf<<-EOF
 config setup
-    uniqueids=never 
+  uniqueids=never
 
-conn iOS_cert
-    keyexchange=ikev1
-    fragmentation=yes
-    left=%defaultroute
-    leftauth=pubkey
-    leftsubnet=::/0
-    leftcert=server.cert.pem
-    right=%any
-    rightauth=pubkey
-    rightauth2=xauth
-    rightsourceip=10.31.2.0/24
-    rightcert=client.cert.pem
-    auto=add
-
-conn android_xauth_psk
-    keyexchange=ikev1
-    left=%defaultroute
-    leftauth=psk
-    leftsubnet=::/0
-    right=%any
-    rightauth=psk
-    rightauth2=xauth
-    rightsourceip=10.31.2.0/24
-    auto=add
-
-conn networkmanager-strongswan
-    keyexchange=ikev2
-    ike=aes256-sha256-modp2048,3des-sha1-modp2048,aes256-sha1-modp2048!
-    esp=aes128-sha256
-    left=%defaultroute
-    leftauth=pubkey
-    leftsubnet=::/0
-    leftcert=server.cert.pem
-    right=%any
-    rightauth=pubkey
-    rightsourceip=10.31.2.0/24
-    rightcert=client.cert.pem
-    auto=add
-
-conn ios_ikev2
-    keyexchange=ikev2
-    ike=aes256-sha256-modp2048,3des-sha1-modp2048,aes256-sha1-modp2048!
-    esp=aes256-sha256,3des-sha1,aes256-sha1!
-    rekey=no
-    left=%defaultroute
-    leftid=${vps_ip}
-    leftsendcert=always
-    leftsubnet=::/0
-    leftcert=server.cert.pem
-    right=%any
-    rightauth=eap-mschapv2
-    rightsourceip=10.31.2.0/24
-    rightsendcert=never
-    eap_identity=%any
-    dpdaction=clear
-    fragmentation=yes
-    auto=add
-
-conn windows7
-    keyexchange=ikev2
-    ike=aes256-sha1-modp1024!
-    rekey=no
-    left=%defaultroute
-    leftauth=pubkey
-    leftsubnet=0.0.0.0/0
-    leftcert=server.cert.pem
-    right=%any
-    rightauth=eap-mschapv2
-    rightsourceip=10.31.2.0/24
-    rightsendcert=never
-    eap_identity=%any
-    auto=add
+conn %default
+  keyexchange=ikev2
+  left=%defaultroute
+  leftauth=pubkey
+  leftfirewall=yes
+  right=%any
+  mobike=yes
+  compress=no
+  ike=chacha20poly1305-sha512-newhope128,chacha20poly1305-sha512-x25519,aes256-sha512-modp2048,aes128-sha512-modp2048,aes256ccm96-sha384-modp2048,aes256-sha256-modp2048,aes128-sha256-modp2048,aes128-sha1-modp2048!
+  esp=chacha20poly1305,aes256gcm128,aes128gcm128,aes256ccm128,aes256
+  
+  
+ # IPv4 connection server config
+conn ec4
+  leftsendcert=always
+  leftcert=server.cert.pem
+  leftid=${vps_ip}
+  leftsubnet=0.0.0.0/0
+  rightauth=eap-mschapv2
+  rightsourceip=10.31.1.0/24
+  rightsendcert=never
+  eap_identity=%any
+  auto=add
+ 
+# IPv6 connection server config
+conn ec6
+  leftsendcert=always
+  leftcert=server.cert.pem
+  leftid=${vps_ip}
+  leftsubnet=::/0
+  rightauth=eap-mschapv2
+  rightsourceip=2a0b:8bc0:2:e53b:1000::/68,10.31.2.0/24
+  rightdns=2001:4860:4860::8888,1.1.1.1
+  rightsendcert=never
+  eap_identity=%identity
+  auto=add
 
 EOF
 }
