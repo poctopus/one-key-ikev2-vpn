@@ -484,6 +484,16 @@ function iptables_set(){
         ip6tables -X
         ip6tables -F
         ip6tables -Z
+        iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+        iptables -A FORWARD -s 10.31.0.0/24  -j ACCEPT
+        iptables -A FORWARD -s 10.31.1.0/24  -j ACCEPT
+        iptables -A FORWARD -s 10.31.2.0/24  -j ACCEPT
+        iptables -A INPUT -i $interface -p esp -j ACCEPT
+        iptables -A INPUT -i $interface -p udp --dport 500 -j ACCEPT
+        iptables -A INPUT -i $interface -p tcp --dport 500 -j ACCEPT
+        iptables -A INPUT -i $interface -p udp --dport 4500 -j ACCEPT
+        iptables -A INPUT -i $interface -p udp --dport 1701 -j ACCEPT
+        iptables -A INPUT -i $interface -p tcp --dport 1723 -j ACCEPT        
         if [ "$use_SNAT_str" = "1" ]; then
             iptables -t nat -A POSTROUTING -s 10.31.0.0/24 -o $interface -j SNAT --to-source $static_ip
             iptables -t nat -A POSTROUTING -s 10.31.1.0/24 -o $interface -j SNAT --to-source $static_ip
@@ -492,11 +502,6 @@ function iptables_set(){
             iptables -t nat -A POSTROUTING -s 10.31.0.0/24 -o $interface -j MASQUERADE
             iptables -t nat -A POSTROUTING -s 10.31.1.0/24 -o $interface -j MASQUERADE
             iptables -t nat -A POSTROUTING -s 10.31.2.0/24 -o $interface -j MASQUERADE
-            ip6tables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-            ip6tables -A FORWARD -s 2a0b:8bc0:2:e53b:1000::/68 -j ACCEPT
-            ip6tables -A INPUT -i eth0 -p ipv6-icmp -j ACCEPT
-            ip6tables -A INPUT -i eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-            ip6tables -A FORWARD -j REJECT
         fi
     else
         read -p "Network card interface(default_value:venet0):" interface
