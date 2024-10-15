@@ -214,7 +214,7 @@ function pre_install(){
 
 # Download strongswan
 function download_files(){
-    strongswan_version='strongswan-5.9.0'
+    strongswan_version='strongswan-5.9.14'
     strongswan_file="$strongswan_version.tar.gz"
     if [ -f $strongswan_file ];then
         echo -e "$strongswan_file [$(__green "found")]"
@@ -436,8 +436,6 @@ function configure_strongswan(){
         }
         dns1 = 8.8.8.8
         dns2 = 8.8.4.4
-        dns1_ipv6 = 2001:4860:4860::8888
-        dns2_ipv6 = 2001:4860:4860::8844
         nbns1 = 8.8.8.8
         nbns2 = 8.8.4.4
 }
