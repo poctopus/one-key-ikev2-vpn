@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #可以直接用远程命令执行
-# bash -c "$(curl -fsSL https://raw.githubusercontent.com/poctopus/one-key-ikev2-vpn/domain-ssl.sh)"
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/poctopus/one-key-ikev2-vpn/master/domain-ssl.sh)"
 # 定义 account.conf 文件路径
 account_conf="/root/.acme.sh/account.conf"
 
