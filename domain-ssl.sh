@@ -60,7 +60,7 @@ case $choice in
         fi
 
         # 执行证书签发
-        /root/.acme.sh/acme.sh --issue --dns dns_cf --dnssleep 120 -d $domain -k 2048
+        /root/.acme.sh/acme.sh --issue --dns dns_cf --dnssleep 30 -d $domain -k 2048
         # 检查是否生成了对应的证书文件
         if [ -f "/root/.acme.sh/$domain/$domain.cer" ]; then
             echo "证书生成成功。清理旧的 .pem 文件..."
