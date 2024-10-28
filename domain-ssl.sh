@@ -26,8 +26,8 @@ case $choice in
             curl https://get.acme.sh | sh -s email=$email
         fi
 
-        # 设置默认 CA，使用绝对路径执行 acme.sh
-        /root/.acme.sh/acme.sh --set-default-ca --server buypass
+        # 设置默认 CA，使用绝对路径执行 acme.sh（默认使用zerossl证书，如果对证书有效期有需求的，域名不多的，可以切换未buypass的CA）
+        # /root/.acme.sh/acme.sh --set-default-ca --server buypass
 
         # 检查并修改 account.conf 文件
         if ! grep -q "CF_Token" "$account_conf"; then
@@ -59,17 +59,24 @@ case $choice in
 
         # 执行证书签发
         /root/.acme.sh/acme.sh --issue --dns dns_cf --dnssleep 120 -d $domain -k 2048
-        rm -f /usr/local/etc/ipsec.d/cacerts/*.pem
-        rm -f /usr/local/etc/ipsec.d/certs/*.pem
-        rm -f /usr/local/etc/ipsec.d/private/*.pem
-        cp /root/.acme.sh/$domain/$domain.cer /usr/local/etc/ipsec.d/certs/server.cert.pem
-        cp /root/.acme.sh/$domain/$domain.cer /usr/local/etc/ipsec.d/certs/client.cert.pem
-        cp /root/.acme.sh/$domain/$domain.key /usr/local/etc/ipsec.d/private/server.pem
-        cp /root/.acme.sh/$domain/$domain.key /usr/local/etc/ipsec.d/private/client.pem
-        cp /root/.acme.sh/$domain/ca.cer /usr/local/etc/ipsec.d/cacerts/ca.cert.pem
-
-ipsec restart
-        echo "证书签发完成。"
+        # 检查是否生成了对应的证书文件
+        if [ -f "/root/.acme.sh/$domain/$domain.cer" ]; then
+            echo "证书生成成功。清理旧的 .pem 文件..."
+            rm -f /usr/local/etc/ipsec.d/cacerts/*.pem
+            rm -f /usr/local/etc/ipsec.d/certs/*.pem
+            rm -f /usr/local/etc/ipsec.d/private/*.pem
+            cp /root/.acme.sh/$domain/$domain.cer /usr/local/etc/ipsec.d/certs/server.cert.pem
+            cp /root/.acme.sh/$domain/$domain.cer /usr/local/etc/ipsec.d/certs/client.cert.pem
+            cp /root/.acme.sh/$domain/$domain.key /usr/local/etc/ipsec.d/private/server.pem
+            cp /root/.acme.sh/$domain/$domain.key /usr/local/etc/ipsec.d/private/client.pem
+            cp /root/.acme.sh/$domain/ca.cer /usr/local/etc/ipsec.d/cacerts/ca.cert.pem
+            ipsec rereadall
+            ipsec restart
+            echo "证书签发成功，旧证书清理完成、新证书重新加载成功"
+        else
+            echo "证书生成失败，退出。"
+            exit 1
+        fi
         ;;
     *)
         echo "无效选项，请输入 1 或 2。"
