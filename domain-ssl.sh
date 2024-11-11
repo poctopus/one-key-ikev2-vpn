@@ -19,6 +19,28 @@ case $choice in
         read -p "请输入 Cloudflare Token: " cf_token
         read -p "请输入 Cloudflare Account ID: " cf_accountid
 
+        # 选择默认 CA 选项
+        echo "请选择默认 CA:"
+        echo "1) ZeroSSL（90天）"
+        echo "2) Buypass（180天）"
+        echo "3) Google（90天）"
+        echo "4) Let's Encrypt（90天）"
+        echo "5) SSL.com（90天）"
+        read -p "输入选项编号 (1, 2 或 3): " ca_choice
+
+        # 根据选择设置 CA
+        case $ca_choice in
+            1) default_ca="zerossl" ;;
+            2) default_ca="buypass" ;;
+            3) default_ca="google" ;;
+            4) default_ca="letsencrypt" ;;
+            5) default_ca="sslcom" ;;
+            *)
+                echo "无效选项，请输入 1, 2 或 3。"
+                exit 1
+                ;;
+        esac
+        
         # 检查是否已经安装 acme.sh
         if command -v acme.sh >/dev/null 2>&1 || [ -d "/root/.acme.sh" ]; then
             echo "acme.sh 已经安装，跳过安装步骤。"
@@ -29,7 +51,7 @@ case $choice in
         fi
 
         # 设置默认 CA，使用绝对路径执行 acme.sh（默认使用zerossl证书，如果对证书有效期有需求的，域名不多的，可以切换未buypass的CA）
-        # /root/.acme.sh/acme.sh --set-default-ca --server buypass
+        /root/.acme.sh/acme.sh --set-default-ca --server $default_ca
 
         # 检查并修改 account.conf 文件
         if ! grep -q "CF_Token" "$account_conf"; then
