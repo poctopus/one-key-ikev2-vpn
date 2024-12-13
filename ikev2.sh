@@ -516,6 +516,8 @@ function iptables_set(){
         iptables -A INPUT -i $interface -p esp -j ACCEPT
         iptables -A INPUT -i $interface -p udp --dport 500 -j ACCEPT
         iptables -A INPUT -i $interface -p tcp --dport 500 -j ACCEPT
+        iptables -A INPUT -i $interface -p udp --dport 443 -j ACCEPT
+        iptables -A INPUT -i $interface -p tcp --dport 443 -j ACCEPT
         iptables -A INPUT -i $interface -p udp --dport 4500 -j ACCEPT
         iptables -A INPUT -i $interface -p udp --dport 1701 -j ACCEPT
         iptables -A INPUT -i $interface -p tcp --dport 1723 -j ACCEPT
