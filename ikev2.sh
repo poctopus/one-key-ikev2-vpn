@@ -531,6 +531,8 @@ function iptables_set(){
             iptables -t nat -A POSTROUTING -s 10.31.3.0/24 -o $interface -j SNAT --to-source $static_ip
             iptables -t nat -A POSTROUTING -s 10.31.4.0/24 -o $interface -j SNAT --to-source $static_ip
         else
+            iptables -t nat -A PREROUTING -p tcp -s 10.31.3.0/24 -j REDIRECT --to-ports 8001
+            iptables -t nat -A PREROUTING -p tcp -s 10.31.4.0/24 -j REDIRECT --to-ports 8002        
             iptables -t nat -A POSTROUTING -s 10.31.0.0/24 -o $interface -j MASQUERADE
             iptables -t nat -A POSTROUTING -s 10.31.1.0/24 -o $interface -j MASQUERADE
             iptables -t nat -A POSTROUTING -s 10.31.2.0/24 -o $interface -j MASQUERADE
