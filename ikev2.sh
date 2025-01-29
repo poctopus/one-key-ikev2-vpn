@@ -114,7 +114,7 @@ function yum_install(){
     yum -y install pam-devel openssl-devel make gcc curl
     else
     apt-get -y update
-    apt-get -y install libpam0g-dev libssl-dev make gcc curl
+    apt-get -y install libpam0g-dev libssl-dev make gcc curl iptables
     fi
 }
 
@@ -509,6 +509,7 @@ function iptables_set(){
             interface="eth0"
         fi
         iptables -F
+        iptables -F -t nat
         iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
         iptables -A FORWARD -s 10.31.0.0/24  -j ACCEPT
         iptables -A FORWARD -s 10.31.1.0/24  -j ACCEPT
