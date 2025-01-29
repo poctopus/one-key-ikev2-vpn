@@ -377,7 +377,7 @@ conn networkmanager-strongswan
     esp=aes128-sha256
     left=%defaultroute
     leftauth=pubkey
-    leftsubnet=0.0.0.0/0
+    leftsubnet=0.0.0.0/0,::/0
     leftcert=server.cert.pem
     right=%any
     rightauth=pubkey
@@ -393,7 +393,7 @@ conn ios_ikev2
     left=%defaultroute
     leftid=${vps_ip}
     leftsendcert=always
-    leftsubnet=0.0.0.0/0
+    leftsubnet=0.0.0.0/0,::/0
     leftcert=server.cert.pem
     right=%any
     rightauth=eap-radius
