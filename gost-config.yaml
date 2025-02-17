@@ -1,0 +1,85 @@
+---
+services:
+  - name: gost-us
+    logger: gost-us
+    addr: :8001
+    handler:
+      type: red
+      chain: chain-us
+      metadata:
+        sniffing: true
+        sniffing.timeout: 5s
+        sniffing.fallback: true
+    listener:
+      type: red
+  - name: gost-jp
+    logger: gost-jp
+    addr: :8002
+    handler:
+      type: red
+      chain: chain-jp
+      metadata:
+        sniffing: true
+        sniffing.timeout: 5s
+        sniffing.fallback: true
+    listener:
+      type: red
+  - name: gost-sg
+    logger: gost-sg
+    addr: :8003
+    handler:
+      type: red
+      chain: chain-sg
+      metadata:
+        sniffing: true
+        sniffing.timeout: 5s
+        sniffing.fallback: true
+    listener:
+      type: red
+chains:
+  - name: chain-us
+    hops:
+      - name: hop-us
+        nodes:
+          - name: node-us
+            addr: 127.0.0.1:7071
+            connector:
+              type: http
+            dialer:
+              type: tcp
+  - name: chain-jp
+    hops:
+      - name: hop-jp
+        nodes:
+          - name: node-jp
+            addr: 127.0.0.1:7072
+            connector:
+              type: http
+            dialer:
+              type: tcp
+  - name: chain-sg
+    hops:
+      - name: hop-sg
+        nodes:
+          - name: node-sg
+            addr: 127.0.0.1:7073
+            connector:
+              type: http
+            dialer:
+              type: tcp
+loggers:
+  - name: gost-us
+    log:
+      level: info
+      format: text
+      output: /app/gost/log/gost-us.log
+  - name: gost-jp
+    log:
+      level: info
+      format: text
+      output: /app/gost/log/gost-jp.log
+  - name: gost-sg
+    log:
+      level: info
+      format: text
+      output: /app/gost/log/gost-sg.log
