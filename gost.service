@@ -1,0 +1,14 @@
+# 在/etc/systemd/system目录下创建gost.service文件，作为服务。
+
+[Unit]
+Description=GO Simple Tunnel
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/gost -C /app/gost/config.yaml
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
