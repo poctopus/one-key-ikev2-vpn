@@ -98,6 +98,7 @@ case $choice in
             ipsec rereadall
             ipsec restart
             echo "证书签发成功，旧证书清理完成、新证书重新加载成功"
+            ipsec listcerts
         else
             echo "证书生成失败，退出。"
             exit 1
