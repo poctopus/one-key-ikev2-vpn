@@ -111,10 +111,10 @@ function get_system(){
 function yum_install(){
     if [ "$system_str" = "0" ]; then
     yum -y update
-    yum -y install pam-devel openssl-devel make gcc curl
+    yum -y install pam-devel openssl-devel make gcc curl vnstat
     else
     apt-get -y update
-    apt-get -y install libpam0g-dev libssl-dev make gcc curl iptables
+    apt-get -y install libpam0g-dev libssl-dev make gcc curl iptables vnstat
     fi
 }
 
