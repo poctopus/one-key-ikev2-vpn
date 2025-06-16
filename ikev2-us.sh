@@ -508,12 +508,15 @@ function iptables_set(){
         if [ "$interface" = "" ]; then
             interface="eth0"
         fi
+        ipset create blockip hash:net --exist
+        ipset add blockip 192.168.100.1
         iptables -F
         iptables -F -t nat
         iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
         iptables -A FORWARD -s 10.31.0.0/24  -j ACCEPT
         iptables -A FORWARD -s 10.31.1.0/24  -j ACCEPT
         iptables -A FORWARD -s 10.31.2.0/24  -j ACCEPT
+        iptables -A INPUT -m set --match-set blockip src -j DROP
         iptables -A INPUT -i $interface -p esp -j ACCEPT
         iptables -A INPUT -i $interface -p udp --dport 500 -j ACCEPT
         iptables -A INPUT -i $interface -p tcp --dport 500 -j ACCEPT
@@ -537,10 +540,13 @@ function iptables_set(){
         if [ "$interface" = "" ]; then
             interface="venet0"
         fi
+        ipset create blockip hash:net --exist
+        ipset add blockip 192.168.100.1
         iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
         iptables -A FORWARD -s 10.31.0.0/24  -j ACCEPT
         iptables -A FORWARD -s 10.31.1.0/24  -j ACCEPT
         iptables -A FORWARD -s 10.31.2.0/24  -j ACCEPT
+        iptables -A INPUT -m set --match-set blockip src -j DROP
         iptables -A INPUT -i $interface -p esp -j ACCEPT
         iptables -A INPUT -i $interface -p udp --dport 500 -j ACCEPT
         iptables -A INPUT -i $interface -p tcp --dport 500 -j ACCEPT
@@ -559,6 +565,7 @@ function iptables_set(){
         fi
     fi
     if [ "$system_str" = "0" ]; then
+        service ipset save
         service iptables save
     else
         ipset save > /etc/ipset.conf
