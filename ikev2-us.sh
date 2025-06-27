@@ -508,7 +508,7 @@ function iptables_set(){
         if [ "$interface" = "" ]; then
             interface="eth0"
         fi
-        ipset create blockip hash:net --exist
+        ipset create blockip hash:ip --exist
         ipset add blockip 192.168.100.1
         iptables -F
         iptables -F -t nat
