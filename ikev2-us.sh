@@ -508,8 +508,8 @@ function iptables_set(){
         if [ "$interface" = "" ]; then
             interface="eth0"
         fi
-        ipset create blockip hash:ip --exist
-        ipset add blockip 192.168.100.1
+        ipset create blockip hash:net --exist
+        ipset add blockip 192.168.100.0/24
         iptables -F
         iptables -F -t nat
         iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
@@ -541,7 +541,7 @@ function iptables_set(){
             interface="venet0"
         fi
         ipset create blockip hash:net --exist
-        ipset add blockip 192.168.100.1
+        ipset add blockip 192.168.100.0/24
         iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
         iptables -A FORWARD -s 10.31.0.0/24  -j ACCEPT
         iptables -A FORWARD -s 10.31.1.0/24  -j ACCEPT
